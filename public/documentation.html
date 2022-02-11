@@ -3,6 +3,7 @@
     <head>
         <meta chaarset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/css/styles.css" type="text.css"> 
         <title>movie_api documentation</title>
     </head>
     <body>
@@ -10,17 +11,99 @@
             <h1>
                 movie_api project
             </h1>
-            <p> Project description: The following is a simple project using node.js to build an API to send users information on their favorite movies.
-            </p>
             <p>
-                Below is the development history for this project:
+                Project description: The following is a simple project using node.js to build an API to send users information on their favorite movies.
             </p>
         </div>
-        <ul>
-            <li>
-                2-5-2022: installed Express, body-parser, eslint
-                1-31-2022: project begun, documentation.hmtl, server.js created.
-            </li>
-        </ul>
+        <div>
+            <table class="pathway_table">
+                <thead>
+                    <tr>
+                        <th scope="col">Business Logic</th>
+                        <th scope="col">URL</th>
+                        <th scope ="col">HTTP Method</th>
+                        <th scope="col">Request body data format</th>
+                        <th scope="col">Response body data format</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Return a list of ALL movies to the user</th>
+                        <td>/movies</td>
+                        <td>GET</td>
+                        <td>none</td>
+                        <td>A JSON object hoding data about all the movies</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return data about a single movie by title to the user</th>
+                        <td>/movies/:title</td>
+                        <td>GET</td>
+                        <td>none</td>
+                        <td>A JSON object holding data about a single movie to the user</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return data about a genre (description) by name/title</th>
+                        <td>/movies/genre/:genreName</td>
+                        <td>GET</td>
+                        <td>none</td>
+                        <td>A JSON object holding data about a genre to the user by name/title</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return data about a director by name</th>
+                        <td>/movies/director/:directorName</td>
+                        <td>GET</td>
+                        <td>none</td>
+                        <td>A JSON object holding data about a director by name</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Allow new users to register</th>
+                        <td>/users</td>
+                        <td>POST</td>
+                        <td>A JSON object holding data about the user to add, structured like:
+                            {
+                                username: 'exampleUser1',
+                                favoriteMovies: []
+                            }
+                        </td>
+                        <td>
+                            A JSON object holding data about the user that was added, including an ID:
+                            {
+                                id:5,
+                                name: 'exampleUser1',
+                                favoriteMovies: []                            ]
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Allow users to update their user info (username)</th>
+                        <td>/users/:id</td>
+                        <td>PUT</td>
+                        <td>none</td>
+                        <td>A text message inicating the info has been updated</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Allow users to add a movie to their list of favorites</th>
+                        <td>/users/:id/:favoriteMovies</td>
+                        <td>PUT</td>
+                        <td>none</td>
+                        <td>A message indicating the info has been updated</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Allow users to remove a movie from their list of favorites</th>
+                        <td>/users/:id/:favoriteMovies</td>
+                        <td>DELETE</td>
+                        <td>none</td>
+                        <td>A message indicating the favorite movie has been removed</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Allow existing users to deregister</th>
+                        <td>/users/:id</td>
+                        <td>DELETE</td>
+                        <td>none</td>
+                        <td>A message indicating the user has been deleted</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </body>
 </html>
