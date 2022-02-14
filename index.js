@@ -217,24 +217,24 @@ app.get('/movies/:title', (req, res) => {
 // READ, genre
 app.get('/movies/genre/:genreName', (req, res) => {
   const { genreName } = req.params;
-  const genre = movies.find( movie => movie.Genre.Name === genreName ).Genre
+  const genre = movies.find( movie => movie.Genre.Name === genreName );
 
   if (genre) {
-    res.status(200).json(genre);
+    res.status(200).json(genre.Genre);
   } else {
-    res.status(400).send('no such genre')
+    res.status(400).send('no such genre');
   }
 });
 
 // READ, director
 app.get('/movies/director/:directorName', (req, res) => {
   const { directorName } = req.params;
-  const director = movies.find( movie => movie.Director.Name === directorName ).Director
+  const director = movies.find( movie => movie.Director.Name === directorName );
 
   if (director) {
-    res.status(200).json(director);
+    res.status(200).json(director.Director);
   } else {
-    res.status(400).send('no such director')
+    res.status(400).send('no such director');
   }
 });
 
