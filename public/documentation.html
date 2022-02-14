@@ -59,7 +59,8 @@
                         <th scope="row">Allow new users to register</th>
                         <td>/users</td>
                         <td>POST</td>
-                        <td>A JSON object holding data about the user to add, structured like:
+                        <td>
+                            A JSON object holding data about the user to add, structured like:
                             {
                                 username: 'exampleUser1',
                                 favoriteMovies: []
@@ -78,15 +79,27 @@
                         <th scope="row">Allow users to update their user info (username)</th>
                         <td>/users/:id</td>
                         <td>PUT</td>
-                        <td>none</td>
-                        <td>A text message inicating the info has been updated</td>
+                        <td>
+                            A JSON object holding data about the user to add, structured like:
+                            {
+                                "name": "exampleUser1",
+                            }
+                        </td>
+                        <td>
+                            A JSON object holding data about the user's changed name structured like:
+                            {
+                                id: 1,
+                                "name": "exampleUser1",
+                                favoriteMovies: []
+                            }
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row">Allow users to add a movie to their list of favorites</th>
                         <td>/users/:id/:favoriteMovies</td>
                         <td>PUT</td>
                         <td>none</td>
-                        <td>A message indicating the info has been updated</td>
+                        <td>A message indicating whether the movie was successfully added</td>
                     </tr>
                     <tr>
                         <th scope="row">Allow users to remove a movie from their list of favorites</th>
