@@ -1,12 +1,19 @@
+body {
+    font-family: 'Lato', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
 h1 {
     text-align: center;
 }
 
-td {
-    text-align: center;
-}
-
-.pathway_table {
+table {
     margin: auto;
     width: 90%;
+    border: 1px, solid;
+}
+
+td {
+    text-align: center;
 }
