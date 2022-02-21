@@ -1,6 +1,16 @@
+/*
+Colors used
+
+Background Color: #000000 (black);
+Text Color: (white) #ffffff;
+Table Cell Color, Border Color: (Dark Teal) 265b5f; 
+*/
+
 body {
     font-family: 'Lato', sans-serif;
     font-size: 16px;
+    background-color: black;
+    color: white;
     line-height: 1.6;
 }
 
@@ -8,12 +18,19 @@ h1 {
     text-align: center;
 }
 
-table {
-    margin: auto;
-    width: 90%;
-    border: 1px, solid;
+p {
+    text-align: center;
 }
 
-td {
+td, th {
     text-align: center;
+    background-color: #265b5f;
+}
+
+table {
+    margin: auto;
+    margin-bottom: 20px;
+    width: 90%;
+    border: 1px, solid;
+    border-color: white;
 }
