@@ -1,9 +1,20 @@
+//requires the Mongoose package and the Mongoose models created in models.js
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
+//refers to the model names defined in models.js
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/myFlixdDB', { useNewUrlParser: true, useUnifiedTopology: true });
+
 const express = require('express'),
   morgan = require('morgan'),
   bodyParser = require('body-parser'),
   uuid = require('uuid');
 
-//user and movie objects
+//user and movie objects from 2.5
+/*
 let movies = [
   {
     "Title": "The Godfather",
@@ -96,7 +107,8 @@ let movies = [
     }
   }
 ];
-
+*/
+/*
 let users = [
   {
     id: 1,
@@ -109,6 +121,7 @@ let users = [
     favoriteMovies: []
   }
 ];
+*/
 
 //after importing express needs to be added to the app
 const app = express();
@@ -126,6 +139,41 @@ app.use((err, req, res, next) => {
 });
 
 // CREATE add user
+/* We'll expect JSON in this format
+{
+  ID: Integer,
+  Username: String,
+  Password: String,
+  Email: String,
+  Birthday: Date
+}*/
+app.post('/users', (req, res) => {
+  Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + 'already exists');
+      } else {
+        Users
+          .create({
+            Username: req.body.Username,
+            Password: req.body.Password,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) =>{res.status(201).json(user) })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).send('Error: ' + error);
+        })
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
+    });
+});
+
+/* Previous code from exercise 2.5:
 app.post('/users', (req, res) => {
   const newUser = req.body;
 
@@ -136,10 +184,41 @@ app.post('/users', (req, res) => {
   } else {
     res.status(400).send('users need names')
   }
+}); */
+
+// UPDATE a user's info, by username
+/* We'll expect JSON in this format
+{
+  Username: String,
+  (required)
+  Password: String,
+  (required)
+  Email: String,
+  (required)
+  Birthday: Date
+}*/
+app.put('/users/:Username', (req, res) => {
+  Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+    {
+      Username: req.body.Username,
+      Password: req.body.Password,
+      Email: req.body.Email,
+      Birthday: req.body.Birthday
+    }
+  },
+  { new: true }, // This line makes sure that the updated document is returned
+  (err, updatedUser) => {
+    if(err) {
+      console.error(err);
+      res.status(500).send('Error ' + err);
+    } else {
+      res.json(updatedUser);
+    }
+  });
 });
 
-// UPDATE updatedUser.name
-app.put('/users/:id', (req, res) => {
+//previously used code from exercise 2.5
+/*app.put('/users/:id', (req, res) => {
   const { id } = req.params;
   const updatedUser = req.body;
 
@@ -151,10 +230,25 @@ app.put('/users/:id', (req, res) => {
   } else {
     res.status(400).send('no such user')
   }
-});
+});*/
 
 // CREATE add movieTitle to favoriteMovies
-app.post('/users/:id/:movieTitle', (req, res) => {
+app.post('users/:Username/movies/:MovieID', (req, res) => {
+  Users.findOneAndUpdate({ Username: req.params.Username}, { $push: { FavoriteMovies: req.params.MovieID }
+  },
+  { new: true }, // This line makes sure that the updated document is returned
+  (err, updatedUser) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    } else {
+      res.json(updatedUser);
+    }
+  });
+});
+
+//previously used code from exercise 2.5
+/*app.post('/users/:id/:movieTitle', (req, res) => {
   const { id, movieTitle } = req.params;
   const updatedUser = req.body;
 
@@ -166,7 +260,7 @@ app.post('/users/:id/:movieTitle', (req, res) => {
   } else {
     res.status(400).send('no such user')
   }
-});
+});*/
 
 // DELETE remove favoriteMovies
 app.delete('/users/:id/:movieTitle', (req, res) => {
@@ -184,7 +278,24 @@ app.delete('/users/:id/:movieTitle', (req, res) => {
 });
 
 // DELETE remove user
-app.delete('/users/:id', (req, res) => {
+app.delete('/users/:Username', (req, res) => {
+  Users.findOneAndRemove( { Username: req.params.Username })
+  .then((user) => {
+    if (!user) {
+      res.status(400).send(req.params.Username + ' was not found');
+    } else {
+      res.status(200).send(req.params.Username + ' was deleted.');
+    }
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
+});
+
+
+//Previously used code from exercise 2.5
+/*app.delete('/users/:id', (req, res) => {
   const { id } = req.params;
 
   let user = users.find( user => user.id == id);
@@ -195,9 +306,36 @@ app.delete('/users/:id', (req, res) => {
   } else {
     res.status(400).send('no such user')
   }
+});*/
+
+//READ (added for exercise 2.8)
+// Get all users
+app.get('/users', (req, res) => {
+  Users.find()
+    .then((users) => {
+      res.status(201).json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error:' + err);
+    });
 });
 
-// READ 
+//READ (added for exercise 2.8)
+// get a user by username
+app.get('/users/:Username', (req, res) => {
+  Users.findOne({ Username: req.params.Username })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
+
+
+// READ movies
 app.get('/movies', (req, res) => {
   res.status(200).json(movies)
 });
