@@ -66,14 +66,14 @@
                         <td>/users</td>
                         <td>POST</td>
                         <td>
-                            A JSON object holding data about the user to add, structured like:
+                            A JSON object holding data about the user to add, structured like:<br>
                             {
                                 username: 'exampleUser1',
                                 favoriteMovies: []
                             }
                         </td>
                         <td>
-                            A JSON object holding data about the user that was added, including an ID:
+                            A JSON object holding data about the user that was added, including an ID:<br>
                             {
                                 id:5,
                                 name: 'exampleUser1',
@@ -86,17 +86,43 @@
                         <td>/users/:id</td>
                         <td>PUT</td>
                         <td>
-                            A JSON object holding data about the user to add, structured like:
+                            A JSON object holding data about the user to add, structured like:<br>
                             {
                                 "name": "exampleUser1",
                             }
                         </td>
                         <td>
-                            A JSON object holding data about the user's changed name structured like:
+                            A JSON object holding data about the user's changed name structured like:<br>
                             {
                                 id: 1,
                                 "name": "exampleUser1",
                                 favoriteMovies: []
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Return a list of ALL users to the user</th>
+                        <td>/users</td>
+                        <td>GET</td>
+                        <td>None</td>
+                        <td>A JSON object holding data about all users, structured like this example:<br>
+                            {
+                                {
+                                    "_id": "620fff65261f9b211379b2e0",
+                                    "Username": "frodobaggins",
+                                    "Password": "#theshire",
+                                    "Email": "theshire@middleearth.com",
+                                    "Birthday:" "04/01/1990",
+                                    "FavoriteMovies": []
+                                },
+                                {
+                                    "_id": "620fffb3261f9b211379b2e1",
+                                    "Username": "bilbobaggins",
+                                    "Password": "%bagend",
+                                    "Email": "bagend@middleearath.com",
+                                    "Birthday:" "09/12/1965",
+                                    "FavoriteMovies": []
+                                }
                             }
                         </td>
                     </tr>
