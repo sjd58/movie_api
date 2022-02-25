@@ -38,7 +38,9 @@
                         <td>/movies</td>
                         <td>GET</td>
                         <td>none</td>
-                        <td>A JSON object hoding data about all the movies</td>
+                        <td>
+                            A JSON object hoding data about all the movies
+                        </td>
                     </tr>
                     <tr>
                         <th scope="row">Return data about a single movie by title to the user</th>
@@ -68,16 +70,21 @@
                         <td>
                             A JSON object holding data about the user to add, structured like:<br>
                             {
-                                username: 'exampleUser1',
-                                favoriteMovies: []
+                                "Username": "exampleUser1",
+                                "Password": "examplePassword1",
+                                "Email": "exampleemail@example.com"
+                                "Birthday": "01/01/2000"
+                                "favoriteMovies": []
                             }
                         </td>
                         <td>
                             A JSON object holding data about the user that was added, including an ID:<br>
                             {
-                                id:5,
-                                name: 'exampleUser1',
-                                favoriteMovies: []                            ]
+                                "Username": "exampleUser1",
+                                "Password": "examplePassword1",
+                                "Email": "exampleemail@example.com"
+                                "Birthday": "01/01/2000"
+                                "favoriteMovies": []
                             }
                         </td>
                     </tr>
