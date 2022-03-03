@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+//requires bcrypt to hash users' passwords
 const bcrypt = require('bcrypt');
 
 let movieSchema = mongoose.Schema({
@@ -25,7 +26,7 @@ let movieSchema = mongoose.Schema({
     FavoriteMovies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Movie' }]
   });
   
-userSchema.statistics.hashPassword = (password) => {
+userSchema.statics.hashPassword = (password) => {
   return bcrypt.hashSync(password, 10);
 };
 
