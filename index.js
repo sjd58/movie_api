@@ -1,3 +1,20 @@
+//import cors and specify allowable origins
+const cors = require('cors');
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if(!origin) return callback(null,true);
+    if(allowedOrigins.indexOf(origin) === -1){ // if a specific origin isn't found on ths list of allowed origins
+      let message = 'The CORS policy for this application doesn\'t allow accessfrom origin ' + origin;
+    }
+      return callback(new Error(message ), false);
+  }
+}));
+
+//requires express validation to validate user input on the server side
+const {check, validationResult } = require('express-validator');
+
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 
@@ -22,19 +39,6 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//import cors and specify allowable origins
-const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
-
-app.use(cors({
-  origin: (origin, callback) => {
-    if(!origin) return callback(null,true);
-    if(allowedOrigins.indexOf(origin) === -1){ // if a specific origin isn't found on ths list of allowed origins}
-      let message = 'The CORS policy for this application doesn\'t allow accessfrom origin ' + origin;
-      return callback(new Error(message ), false);
-  }
-}));
-
 //import auth.js
 let auth = require('./auth')(app);
 
@@ -57,16 +61,32 @@ app.use((err, req, res, next) => {
   Email: String,
   Birthday: Date
 }*/
-app.post('/users', (req, res) => {
-  Users.findOne({ Username: req.body.Username })
+app.post('/users', [
+  //checks that the fields contain something, then checks that the data follows the correct format
+  check('Username', 'Username is required').isLength({min: 5}),
+  check('Username', 'Username contains non alphanumeric character - not allowed').isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+  check('Email', 'Email does not appear to be valid').isEmail()
+
+], (req, res) => {
+
+  //checks the validation object for errors
+  let errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  //hashes any passwords from the user when registering before storing it in the MongoDB database
+  let hashedPassword = Users.hashPassword(req.body.Password);
+  Users.findOne({ Username: req.body.Username }) //search to see if a user with the requested username already exists
     .then((user) => {
-      if (user) {
+      if (user) { //If the user is found, send a response that it already exists
         return res.status(400).send(req.body.Username + 'already exists');
       } else {
         Users
           .create({
             Username: req.body.Username,
-            Password: req.body.Password,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
@@ -76,7 +96,7 @@ app.post('/users', (req, res) => {
         .catch((error) => {
           console.error(error);
           res.status(500).send('Error: ' + error);
-        })
+        });
       }
     })
     .catch((error) => {
@@ -242,6 +262,7 @@ app.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
 app.use(express.static('public'));
 
 // listen for requests
-app.listen(8080, () => {
-  console.log('Your app is listening on port 8080, open your browser')
-})
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0',() => {
+  console.log('Listening on Port ' + port);
+});
