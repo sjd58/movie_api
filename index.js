@@ -257,7 +257,7 @@ app.get('/director/:Name', passport.authenticate('jwt', { session: false }), (re
 });
 
 // READ 
-app.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/', /*passport.authenticate('jwt', { session: false }),*/ (req, res) => {
   res.send('Welcome to my movie app!');
 });
 
