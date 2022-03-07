@@ -5,7 +5,6 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-//commented out for development purposes
 //mongoose.connect('mongodb://localhost:27017/myFlixdDB', { useNewUrlParser: true, useUnifiedTopology: true });
 //mongoose.connect('mongodb+srv://sjd58:careerfoundry2022@myflixapi.xnkm2.mongodb.net/myFlixdDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connect('process.env.CONNECTION_URI', { useNewUrlParser: true, useUnifiedTopology: true });
