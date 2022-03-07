@@ -190,8 +190,7 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
 });
 
 // READ get all users
-// Remember to remove authentication comment included for test purposes
-app.get('/users', /*passport.authenticate('jwt', { session: false }),*/ (req, res) => {
+app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.find()
     .then((users) => {
       res.status(201).json(users);
@@ -216,8 +215,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 });
 
 // READ movies
-// Remember to remove authentication comment included for test purposes
-app.get('/movies', /*passport.authenticate('jwt', { session: false }),*/ (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movies.find()
     .then((movies) => {
       res.status(201).json(movies);
