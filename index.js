@@ -6,7 +6,6 @@ const Movies = Models.Movie;
 const Users = Models.User;
 
 //mongoose.connect('mongodb://localhost:27017/myFlixdDB', { useNewUrlParser: true, useUnifiedTopology: true });
-//mongoose.connect('mongodb+srv://sjd58:careerfoundry2022@myflixapi.xnkm2.mongodb.net/myFlixdDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const express = require('express'),
@@ -118,7 +117,14 @@ app.post('/users', [
   (required)
   Birthday: Date
 }*/
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
+
+  check('Username', 'Username is required').isLength({min:5}),
+  check('Username', 'Username contains nonalphanumeric character - not allowed').isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+  check('Email', 'Email does not appear to be valid').isEmail()
+
+  ], (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
@@ -183,8 +189,8 @@ app.delete('/users/:Username', passport.authenticate('jwt', { session: false }),
   });
 });
 
-//READ
-// Get all users
+// READ get all users
+// Remember to remove authentication comment included for test purposes
 app.get('/users', /*passport.authenticate('jwt', { session: false }),*/ (req, res) => {
   Users.find()
     .then((users) => {
@@ -196,6 +202,7 @@ app.get('/users', /*passport.authenticate('jwt', { session: false }),*/ (req, re
     });
 });
 
+// READ
 // get a user by username
 app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOne({ Username: req.params.Username })
@@ -209,6 +216,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 });
 
 // READ movies
+// Remember to remove authentication comment included for test purposes
 app.get('/movies', /*passport.authenticate('jwt', { session: false }),*/ (req, res) => {
   Movies.find()
     .then((movies) => {
