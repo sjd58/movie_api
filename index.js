@@ -82,7 +82,7 @@ app.post('/users', [
   let hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOne({ Username: req.body.Username }) //search to see if a user with the requested username already exists
     .then((user) => {
-      if (user) { //If the user is found, send a response that it already exists
+      if (user) { //if the user is found, send a response that it already exists
         return res.status(400).send(req.body.Username + ' already exists');
       } else {
         Users
@@ -209,7 +209,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 });
 
 // READ movies
-app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.get('/movies', /*passport.authenticate('jwt', { session: false }),*/ (req, res) => {
   Movies.find()
     .then((movies) => {
       res.status(201).json(movies);
