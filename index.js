@@ -6,8 +6,8 @@ const Movies = Models.Movie;
 const Users = Models.User;
 
 //mongoose.connect('mongodb://localhost:27017/myFlixdDB', { useNewUrlParser: true, useUnifiedTopology: true });
-//mongoose.connect('mongodb+srv://sjd58:careerfoundry2022@myflixapi.xnkm2.mongodb.net/myFlixdDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://sjd58:careerfoundry2022@myflixapi.xnkm2.mongodb.net/myFlixdDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const express = require('express'),
   morgan = require('morgan'),
@@ -68,7 +68,7 @@ app.post('/users', [
   check('Username', 'Username is required').isLength({min: 5}),
   check('Username', 'Username contains non alphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
-  //check('Email', 'Email does not appear to be valid').isEmail() is this the problem?
+  //check('Email', 'Email does not appear to be valid').isEmail()
 
 ], (req, res) => {
 
