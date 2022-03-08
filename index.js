@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const Models = require('./models.js');
+const express = require('express'),
+  morgan = require('morgan'),
+  bodyParser = require('body-parser')
 
 //refers to the model names defined in models.js
 const Movies = Models.Movie;
@@ -7,11 +10,6 @@ const Users = Models.User;
 
 //mongoose.connect('mongodb://localhost:27017/myFlixdDB', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-
-const express = require('express'),
-  morgan = require('morgan'),
-  bodyParser = require('body-parser'),
-  uuid = require('uuid');
 
 //after importing express needs to be added to the app
 const app = express();
@@ -23,25 +21,27 @@ app.use(morgan('common'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//import cors and specify allowable origins
+//import cors and allow ALL origins
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+app.use(cors());
 
+//code to allow only certain origins
+/* const allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
 app.use(cors({
   origin: (origin, callback) => {
     if(!origin) return callback(null,true);
     if(allowedOrigins.indexOf(origin) === -1){ // if a specific origin isn't found on ths list of allowed origins
-      let message = 'The CORS policy for this application doesn\'t allow accessfrom origin ' + origin;
+      const message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
     }
       return callback(new Error(message ), false);
   }
-}));
+})); */
 
 //requires express validation to validate user input on the server side
 const {check, validationResult } = require('express-validator');
 
 //import auth.js
-let auth = require('./auth')(app);
+const auth = require('./auth')(app);
 
 //import passport.js
 const passport = require('passport');
@@ -67,18 +67,19 @@ app.post('/users', [
   check('Username', 'Username is required').isLength({min: 5}),
   check('Username', 'Username contains non alphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
-  //check('Email', 'Email does not appear to be valid').isEmail()
+  check('Email', 'Email does not appear to be valid').isEmail(),
+  check('Birthday', 'Birthday is required').isDate
 
 ], (req, res) => {
 
   //checks the validation object for errors
-  let errors = validationResult(req);
+  const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
   //hashes any passwords from the user when registering before storing it in the MongoDB database
-  let hashedPassword = Users.hashPassword(req.body.Password);
+  const hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOne({ Username: req.body.Username }) //search to see if a user with the requested username already exists
     .then((user) => {
       if (user) { //if the user is found, send a response that it already exists
@@ -122,18 +123,19 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
   check('Username', 'Username is required').isLength({min:5}),
   check('Username', 'Username contains nonalphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
-  check('Email', 'Email does not appear to be valid').isEmail()
+  check('Email', 'Email does not appear to be valid').isEmail(),
+  check('Birthday', 'Birthday is required').isDate
 
   ], (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
-      Password: req.body.Password,
+      Password: req.body.Password, //change to make sure the HASHED password is returned.
       Email: req.body.Email,
       Birthday: req.body.Birthday
     }
   },
-  { new: true }, // This line makes sure that the updated document is returned
+  { new: true },
   (err, updatedUser) => {
     if(err) {
       console.error(err);
@@ -148,7 +150,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
 app.post('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username}, { $push: { FavoriteMovies: req.params.MovieID }
   },
-  { new: true }, // This line makes sure that the updated document is returned
+  { new: true },
   (err, updatedUser) => {
     if (err) {
       console.error(err);
@@ -201,8 +203,7 @@ app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) =
     });
 });
 
-// READ
-// get a user by username
+// READ get a user by username
 app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
   Users.findOne({ Username: req.params.Username })
     .then((user) => {
