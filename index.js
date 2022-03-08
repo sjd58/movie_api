@@ -56,8 +56,8 @@ app.post('/users', [
   check('Username', 'Username is required').isLength({min: 5}),
   check('Username', 'Username contains non alphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
-  check('Email', 'Email does not appear to be valid').isEmail()
-  //check('Birthday', 'Birthday is required').isDate
+  check('Email', 'Email does not appear to be valid').isEmail(),
+  check('Birthday', 'Birthday is required').isDate()
 
 ], (req, res) => {
 
@@ -82,7 +82,7 @@ app.post('/users', [
             Birthday: req.body.Birthday
           })
           .then((user) =>{
-              res.status(201).json(user) 
+              res.status(201).json(user) //how to hide hashed password?
             })
         .catch((error) => {
           console.error(error);
@@ -112,15 +112,15 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
   check('Username', 'Username is required').isLength({min:5}),
   check('Username', 'Username contains nonalphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
-  check('Email', 'Email does not appear to be valid').isEmail()
-  //check('Birthday', 'Birthday is required').isDate
+  check('Email', 'Email does not appear to be valid').isEmail(),
+  check('Birthday', 'Birthday is required').isDate()
 
   ], (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
       Password: req.body.Password,
-      Email: req.body.Email,
+      Email: req.body.Email, //make sure that it's using a HASHED password here
       Birthday: req.body.Birthday
     }
   },
@@ -130,7 +130,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
       console.error(err);
       res.status(500).send('Error ' + err);
     } else {
-      res.json(updatedUser);
+      res.json(updatedUser); //how to hide hashed password?
     }
   });
 });
@@ -257,6 +257,7 @@ app.get('/', /*passport.authenticate('jwt', { session: false }),*/ (req, res) =>
 });
 
 //express.static to serve static files in public folder
+//how to make this not conflict with the endpoint directly above?
 app.use(express.static('public'));
 
 // listen for requests
