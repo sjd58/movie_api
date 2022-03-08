@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 const Models = require('./models.js');
-const express = require('express'),
-  morgan = require('morgan'),
-  bodyParser = require('body-parser')
 
 //refers to the model names defined in models.js
 const Movies = Models.Movie;
@@ -10,6 +7,10 @@ const Users = Models.User;
 
 //mongoose.connect('mongodb://localhost:27017/myFlixdDB', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const express = require('express'),
+  morgan = require('morgan'),
+  bodyParser = require('body-parser')
 
 //after importing express needs to be added to the app
 const app = express();
@@ -25,23 +26,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const cors = require('cors');
 app.use(cors());
 
-//code to allow only certain origins
-/* const allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
-app.use(cors({
-  origin: (origin, callback) => {
-    if(!origin) return callback(null,true);
-    if(allowedOrigins.indexOf(origin) === -1){ // if a specific origin isn't found on ths list of allowed origins
-      const message = 'The CORS policy for this application doesn\'t allow access from origin ' + origin;
-    }
-      return callback(new Error(message ), false);
-  }
-})); */
-
 //requires express validation to validate user input on the server side
 const {check, validationResult } = require('express-validator');
 
 //import auth.js
-const auth = require('./auth')(app);
+let auth = require('./auth')(app);
 
 //import passport.js
 const passport = require('passport');
@@ -68,21 +57,21 @@ app.post('/users', [
   check('Username', 'Username contains non alphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
   //check('Email', 'Email does not appear to be valid').isEmail(),
-  //check('Birthday', 'Birthday is required').isDate
+  check('Birthday', 'Birthday is required').isDate
 
 ], (req, res) => {
 
   //checks the validation object for errors
-  const errors = validationResult(req);
+  let errors = validationResult(req);
 
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
   //hashes any passwords from the user when registering before storing it in the MongoDB database
-  const hashedPassword = Users.hashPassword(req.body.Password);
-  Users.findOne({ Username: req.body.Username }) //search to see if a user with the requested username already exists
+  let hashedPassword = Users.hashPassword(req.body.Password);
+  Users.findOne({ Username: req.body.Username })
     .then((user) => {
-      if (user) { //if the user is found, send a response that it already exists
+      if (user) {
         return res.status(400).send(req.body.Username + ' already exists');
       } else {
         Users
@@ -124,13 +113,13 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
   check('Username', 'Username contains nonalphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
   //check('Email', 'Email does not appear to be valid').isEmail(),
-  //check('Birthday', 'Birthday is required').isDate
+  check('Birthday', 'Birthday is required').isDate
 
   ], (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
-      Password: req.body.Password, //change to make sure the HASHED password is returned.
+      Password: req.body.Password,
       Email: req.body.Email,
       Birthday: req.body.Birthday
     }
