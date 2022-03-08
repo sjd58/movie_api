@@ -56,8 +56,8 @@ app.post('/users', [
   check('Username', 'Username is required').isLength({min: 5}),
   check('Username', 'Username contains non alphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
-  //check('Email', 'Email does not appear to be valid').isEmail(),
-  check('Birthday', 'Birthday is required').isDate
+  check('Email', 'Email does not appear to be valid').isEmail()
+  //check('Birthday', 'Birthday is required').isDate
 
 ], (req, res) => {
 
@@ -112,8 +112,8 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
   check('Username', 'Username is required').isLength({min:5}),
   check('Username', 'Username contains nonalphanumeric character - not allowed').isAlphanumeric(),
   check('Password', 'Password is required').not().isEmpty(),
-  //check('Email', 'Email does not appear to be valid').isEmail(),
-  check('Birthday', 'Birthday is required').isDate
+  check('Email', 'Email does not appear to be valid').isEmail()
+  //check('Birthday', 'Birthday is required').isDate
 
   ], (req, res) => {
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
