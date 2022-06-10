@@ -119,8 +119,8 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
-      Password: req.body.Password,
-      Email: req.body.Email, //make sure that it's using a HASHED password here
+      Password: hashedPassword,
+      Email: req.body.Email,
       Birthday: req.body.Birthday
     }
   },
@@ -130,7 +130,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
       console.error(err);
       res.status(500).send('Error ' + err);
     } else {
-      res.json(updatedUser); //how to hide hashed password?
+      res.json(updatedUser);
     }
   });
 });
