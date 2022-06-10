@@ -116,6 +116,7 @@ app.put('/users/:Username', passport.authenticate('jwt', { session: false }),[
   check('Birthday', 'Birthday is required').isDate()
 
   ], (req, res) => {
+  let hashedPassword = Users.hashPassword(req.body.Password);
   Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
