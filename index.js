@@ -67,8 +67,7 @@ app.post('/users', [
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
   }
-  //hashes any passwords from the user when registering before storing it in the MongoDB database
-  let hashedPassword = Users.hashPassword(req.body.Password);
+
   Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
@@ -77,12 +76,12 @@ app.post('/users', [
         Users
           .create({
             Username: req.body.Username,
-            Password: hashedPassword,
+            Password: req.body.Password,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })
           .then((user) =>{
-              res.status(201).json(user) //how to hide hashed password?
+              res.status(201).json(user)
             })
         .catch((error) => {
           console.error(error);
